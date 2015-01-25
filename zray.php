@@ -9,7 +9,7 @@ class ZfCommons
         $application = $context['this'];
 
         $serviceLocator = $application->getServiceManager();
-        
+
         // ZfcUser identity
         if ($serviceLocator->has('zfcuser_auth_service')) {
             $auth = $serviceLocator->get('zfcuser_auth_service');
@@ -20,7 +20,7 @@ class ZfCommons
                 $storage['zfc-user'][] = ['identity' => 'No identity'];
             }
         }
-        
+
         // ZfcRbac
         if (interface_exists('ZendDeveloperTools\Collector\CollectorInterface') && class_exists('ZfcRbac\Collector\RbacCollector')) {
             $mvcEvent = $application->getMvcEvent();
@@ -31,14 +31,14 @@ class ZfCommons
                 $collector->collect($mvcEvent);
                 $collector->unserialize($collector->serialize());
                 $collection = $collector->getCollection();
-    
+
                 $storage['zfc-rbac']['settings'] = [
                     'Guest role' => $collection['options']['guest_role'],
                     'Guard protection policy' => $collection['options']['protection_policy']
                 ];
                 if (count($collection['guards']) > 0) {
                     foreach ($collection['guards'] as $type => $rules) {
-                        $storage['zfc-rbac']['guards'] = [$type => $rules];
+                        $storage['zfc-rbac']['guards'][$type] = $rules;
                     }
                 }
                 if (count($collection['roles']) > 0) {
@@ -51,7 +51,7 @@ class ZfCommons
                 }
             }
         }
-    }  
+    }
 }
 
 $zfcStorage = new ZfCommons();
